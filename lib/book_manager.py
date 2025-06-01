@@ -30,5 +30,16 @@ def list():
     for book in books:
         print(f"{book.title} by {book.author.name} ({book.genre.name})")
 
+@cli.command()
+@click.argument("title")
+def delete(title):
+    book = session.query(Book).filter_by(title=title).first()
+    if not book:
+        click.echo(f"No book found with title: {title}")
+        return
+    session.delete(book)
+    session.commit()
+    click.echo(f"Deleted book: {title}")
+
 if __name__ == "__main__":
     cli()
