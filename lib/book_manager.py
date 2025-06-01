@@ -10,6 +10,9 @@ def cli():
 @click.argument("author_name")
 @click.argument("genre_name")
 def add(title, author_name, genre_name):
+    if not title.strip() or not author_name.strip() or not genre_name.strip():
+        click.echo("Error: Title, author name, and genre name must not be empty.")
+        raise click.Abort()
     author = session.query(Author).filter_by(name=author_name).first()
     if not author:
         author = Author(name=author_name)
