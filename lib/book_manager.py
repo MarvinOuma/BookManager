@@ -19,6 +19,11 @@ def add(title, author_name, genre_name):
     genre = session.query(Genre).filter_by(name=genre_name).first()
     if not genre:
         genre = Genre(name=genre_name)
+    # Check for duplicate book
+    existing_book = session.query(Book).filter_by(title=title, author=author, genre=genre).first()
+    if existing_book:
+        click.echo(f"Error: Book '{title}' by '{author_name}' in genre '{genre_name}' already exists.")
+        raise click.Abort()
     book = Book(title=title, author=author, genre=genre)
     session.add(book)
     session.commit()
