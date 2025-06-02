@@ -12,13 +12,18 @@ This is a simple book management CLI application built with Python and SQLAlchem
 ## Setup
 
 1. Create and activate a Python virtual environment.
+
 2. Install dependencies using `pip install -r requirements.txt`.
+
 3. Run database migrations using Alembic:
-   ```
+
+   ```bash
    alembic upgrade head
    ```
+
 4. (Optional) Seed the database with initial data:
-   ```
+
+   ```bash
    python -m lib.seed
    ```
 
@@ -27,23 +32,27 @@ This is a simple book management CLI application built with Python and SQLAlchem
 Run the CLI commands using Python's module flag:
 
 - Add a book:
-  ```
+
+  ```bash
   python -m lib.book_manager add "Book Title" "Author Name" "Genre Name"
   ```
 
 - List all books:
-  ```
+
+  ```bash
   python -m lib.book_manager list
   ```
 
 - Use the interactive CLI:
-  ```
+
+  ```bash
   python -m lib.interactive_book_manager
   ```
 
 ## Testing
 
 Test the CLI commands by running them and verifying the output. The interactive CLI supports adding, listing, and deleting books with prompts.
+  python -m lib.interactive_book_manager
 
 ## Notes
 
