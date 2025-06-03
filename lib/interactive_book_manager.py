@@ -12,12 +12,24 @@ def select_book():
     choice = click.prompt("Select a book by number", type=click.IntRange(1, len(book_titles)))
     return books[choice - 1]
 
-@click.group()
-def cli():
-    pass
+def search_books():
+    query = click.prompt("Enter search term (title, author, or genre)", type=str).strip()
+    if not query:
+        click.echo("Search term cannot be empty.")
+        return
+    books = session.query(Book).join(Author).join(Genre).filter(
+        (Book.title.ilike(f"%{query}%")) |
+        (Author.name.ilike(f"%{query}%")) |
+        (Genre.name.ilike(f"%{query}%"))
+    ).all()
+    if not books:
+        click.echo("No books found matching the search criteria.")
+        return
+    click.echo("Search results:")
+    for book in books:
+        click.echo(f"{book.title} by {book.author.name} ({book.genre.name})")
 
-@cli.command()
-def add():
+def add_book():
     title = click.prompt("Enter book title", type=str)
     author_name = click.prompt("Enter author name", type=str)
     genre_name = click.prompt("Enter genre name", type=str)
@@ -47,8 +59,7 @@ def add():
     session.commit()
     click.echo(f"Added book: {title}")
 
-@cli.command()
-def list():
+def list_books():
     books = session.query(Book).all()
     if not books:
         click.echo("No books found.")
@@ -56,8 +67,7 @@ def list():
     for book in books:
         click.echo(f"{book.title} by {book.author.name} ({book.genre.name})")
 
-@cli.command()
-def delete():
+def delete_book():
     book = select_book()
     if not book:
         return
@@ -69,5 +79,27 @@ def delete():
     else:
         click.echo("Delete cancelled.")
 
+def main_menu():
+    click.echo("=== Book Manager CLI ===")
+    while True:
+        click.echo("\nSelect an option:")
+        click.echo("1. Add book")
+        click.echo("2. List books")
+        click.echo("3. Search books")
+        click.echo("4. Delete book")
+        click.echo("5. Exit")
+        choice = click.prompt("Enter choice", type=click.IntRange(1,5))
+        if choice == 1:
+            add_book()
+        elif choice == 2:
+            list_books()
+        elif choice == 3:
+            search_books()
+        elif choice == 4:
+            delete_book()
+        elif choice == 5:
+            click.echo("Exiting Book Manager. Goodbye!")
+            break
+
 if __name__ == "__main__":
-    cli()
+    main_menu()
