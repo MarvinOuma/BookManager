@@ -128,18 +128,47 @@ def update_book():
     session.commit()
     click.echo(f"Updated book: {book.title}")
 
+def select_publisher():
+    publishers = session.query(Publisher).all()
+    if not publishers:
+        click.echo("No publishers available.")
+        return None
+    for i, publisher in enumerate(publishers, 1):
+        click.echo(f"{i}. {publisher.name}")
+    choice = click.prompt("Select a publisher by number", type=click.IntRange(1, len(publishers)))
+    return publishers[choice - 1]
+
+def delete_publisher():
+    publisher = select_publisher()
+    if not publisher:
+        return
+    confirm = click.confirm(f"Are you sure you want to delete publisher '{publisher.name}'? This will also remove the publisher from any books.")
+    if confirm:
+        # Remove publisher from books
+        books = session.query(Book).filter(Book.publisher == publisher).all()
+        for book in books:
+            book.publisher = None
+        session.delete(publisher)
+        session.commit()
+        click.echo(f"Deleted publisher: {publisher.name}")
+    else:
+        click.echo("Delete cancelled.")
+
 def manage_publishers():
     while True:
         click.echo("\nPublisher Management:")
         click.echo("1. Add publisher")
         click.echo("2. List publishers")
-        click.echo("3. Back to main menu")
-        choice = click.prompt("Enter choice", type=click.IntRange(1,3))
+        click.echo("3. Delete publisher")
+        click.echo("4. Back to main menu")
+        choice = click.prompt("Enter choice", type=click.IntRange(1,4))
         if choice == 1:
             add_publisher()
         elif choice == 2:
             list_publishers()
         elif choice == 3:
+            delete_publisher()
+        elif choice == 4:
             break
 
 def add_publisher():
