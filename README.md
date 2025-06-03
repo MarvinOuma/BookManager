@@ -1,12 +1,15 @@
 # BookManager
 
-This is a simple book management CLI application built with Python and SQLAlchemy. It allows you to add, list, and delete books along with their authors and genres.
+This is a simple book management CLI application built with Python and SQLAlchemy. It allows you to add, list, delete, update books along with their authors, genres, publishers, and publication years.
 
 ## Features
 
-- Add books with author and genre information.
+- Add books with author, genre, publisher, and publication year information.
 - List all books in the database.
+- Search books by title, author, or genre.
+- Update existing book entries.
 - Delete books interactively.
+- Manage publishers (add, list, delete).
 - Seed the database with initial data.
 
 ## Setup
@@ -55,13 +58,15 @@ Run the CLI commands using Python's module flag:
   2. List books  
   3. Search books  
   4. Delete book  
-  5. Exit  
+  5. Update book  
+  6. Manage publishers  
+  7. Exit  
 
-  You can enter the number corresponding to the action you want to perform. The search option allows you to find books by title, author, or genre.
+  You can enter the number corresponding to the action you want to perform. The search option allows you to find books by title, author, or genre. Publisher management lets you add, list, and delete publishers.
 
 ## Testing
 
-Test the CLI commands by running them and verifying the output. The interactive CLI supports adding, listing, and deleting books with prompts.
+Test the CLI commands by running them and verifying the output. The interactive CLI supports adding, listing, searching, updating, and deleting books with prompts, as well as managing publishers.
 
 ## Notes
 
@@ -70,8 +75,6 @@ Test the CLI commands by running them and verifying the output. The interactive 
 
 ## Future Functionality
 
-- Implement update functionality to modify existing book entries.
-- Add search capability to find books by title, author, or genre.
 - Support exporting and importing book data in various formats (CSV, JSON).
 - Add user authentication and permissions for multi-user support.
 - Develop a web-based UI for easier interaction.
