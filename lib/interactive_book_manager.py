@@ -1,5 +1,5 @@
 import click
-from lib.main import session, Author, Genre, Book
+from lib.main import session, Author, Genre, Book, Publisher
 
 def select_book():
     books = session.query(Book).all()
@@ -87,6 +87,8 @@ def update_book():
     new_title = click.prompt(f"Enter new title [{book.title}]", default=book.title, show_default=False)
     new_author_name = click.prompt(f"Enter new author [{book.author.name}]", default=book.author.name, show_default=False)
     new_genre_name = click.prompt(f"Enter new genre [{book.genre.name}]", default=book.genre.name, show_default=False)
+    new_publication_year = click.prompt(f"Enter new publication year [{book.publication_year or ''}]", default=book.publication_year or "", show_default=False)
+    new_publisher_name = click.prompt(f"Enter new publisher [{book.publisher.name if book.publisher else ''}]", default=book.publisher.name if book.publisher else "", show_default=False)
 
     if not new_title.strip() or not new_author_name.strip() or not new_genre_name.strip():
         click.echo("Error: Title, author name, and genre name must not be empty.")
@@ -103,11 +105,61 @@ def update_book():
         session.add(genre)
         session.commit()
 
+    publisher = None
+    if new_publisher_name.strip():
+        publisher = session.query(Publisher).filter_by(name=new_publisher_name).first()
+        if not publisher:
+            publisher = Publisher(name=new_publisher_name)
+            session.add(publisher)
+            session.commit()
+
+    pub_year = None
+    if new_publication_year:
+        try:
+            pub_year = int(new_publication_year)
+        except ValueError:
+            click.echo("Invalid publication year. Skipping.")
+
     book.title = new_title
     book.author = author
     book.genre = genre
+    book.publication_year = pub_year
+    book.publisher = publisher
     session.commit()
     click.echo(f"Updated book: {book.title}")
+
+def manage_publishers():
+    while True:
+        click.echo("\nPublisher Management:")
+        click.echo("1. Add publisher")
+        click.echo("2. List publishers")
+        click.echo("3. Back to main menu")
+        choice = click.prompt("Enter choice", type=click.IntRange(1,3))
+        if choice == 1:
+            add_publisher()
+        elif choice == 2:
+            list_publishers()
+        elif choice == 3:
+            break
+
+def add_publisher():
+    name = click.prompt("Enter publisher name")
+    publisher = session.query(Publisher).filter_by(name=name).first()
+    if publisher:
+        click.echo("Publisher already exists.")
+        return
+    publisher = Publisher(name=name)
+    session.add(publisher)
+    session.commit()
+    click.echo(f"Added publisher: {name}")
+
+def list_publishers():
+    publishers = session.query(Publisher).all()
+    if not publishers:
+        click.echo("No publishers found.")
+        return
+    for i, publisher in enumerate(publishers, 1):
+        click.echo(f"{i}. {publisher.name}")
 
 def main_menu():
     click.echo("\n\x1b[1m\x1b[4mBOOK MANAGER CLI\x1b[0m\n")  # Bold and underlined heading
@@ -118,8 +170,9 @@ def main_menu():
         click.echo("3. Search books")
         click.echo("4. Delete book")
         click.echo("5. Update book")
-        click.echo("6. Exit")
-        choice = click.prompt("Enter choice", type=click.IntRange(1,6))
+        click.echo("6. Manage publishers")
+        click.echo("7. Exit")
+        choice = click.prompt("Enter choice", type=click.IntRange(1,7))
         if choice == 1:
             add_book()
         elif choice == 2:
@@ -131,6 +184,8 @@ def main_menu():
         elif choice == 5:
             update_book()
         elif choice == 6:
+            manage_publishers()
+        elif choice == 7:
             click.echo("Exiting Book Manager. Goodbye!")
             break
 
