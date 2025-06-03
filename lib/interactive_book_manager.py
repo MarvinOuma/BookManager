@@ -79,6 +79,36 @@ def delete_book():
     else:
         click.echo("Delete cancelled.")
 
+def update_book():
+    book = select_book()
+    if not book:
+        return
+    click.echo("Press enter without typing to keep the current value.")
+    new_title = click.prompt(f"Enter new title [{book.title}]", default=book.title, show_default=False)
+    new_author_name = click.prompt(f"Enter new author [{book.author.name}]", default=book.author.name, show_default=False)
+    new_genre_name = click.prompt(f"Enter new genre [{book.genre.name}]", default=book.genre.name, show_default=False)
+
+    if not new_title.strip() or not new_author_name.strip() or not new_genre_name.strip():
+        click.echo("Error: Title, author name, and genre name must not be empty.")
+        return
+
+    author = session.query(Author).filter_by(name=new_author_name).first()
+    if not author:
+        author = Author(name=new_author_name)
+        session.add(author)
+        session.commit()
+    genre = session.query(Genre).filter_by(name=new_genre_name).first()
+    if not genre:
+        genre = Genre(name=new_genre_name)
+        session.add(genre)
+        session.commit()
+
+    book.title = new_title
+    book.author = author
+    book.genre = genre
+    session.commit()
+    click.echo(f"Updated book: {book.title}")
+
 def main_menu():
     click.echo("\n\x1b[1m\x1b[4mBOOK MANAGER CLI\x1b[0m\n")  # Bold and underlined heading
     while True:
@@ -87,8 +117,9 @@ def main_menu():
         click.echo("2. List books")
         click.echo("3. Search books")
         click.echo("4. Delete book")
-        click.echo("5. Exit")
-        choice = click.prompt("Enter choice", type=click.IntRange(1,5))
+        click.echo("5. Update book")
+        click.echo("6. Exit")
+        choice = click.prompt("Enter choice", type=click.IntRange(1,6))
         if choice == 1:
             add_book()
         elif choice == 2:
@@ -98,6 +129,8 @@ def main_menu():
         elif choice == 4:
             delete_book()
         elif choice == 5:
+            update_book()
+        elif choice == 6:
             click.echo("Exiting Book Manager. Goodbye!")
             break
 
