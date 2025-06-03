@@ -43,16 +43,25 @@ Run the CLI commands using Python's module flag:
   python -m lib.book_manager list
   ```
 
-- Use the interactive CLI:
+- Use the interactive CLI with a menu-driven interface:
 
   ```bash
   python -m lib.interactive_book_manager
   ```
 
+  When you launch the interactive CLI, you will see a menu with numbered options:
+
+  1. Add book  
+  2. List books  
+  3. Search books  
+  4. Delete book  
+  5. Exit  
+
+  You can enter the number corresponding to the action you want to perform. The search option allows you to find books by title, author, or genre.
+
 ## Testing
 
 Test the CLI commands by running them and verifying the output. The interactive CLI supports adding, listing, and deleting books with prompts.
-  python -m lib.interactive_book_manager
 
 ## Notes
 

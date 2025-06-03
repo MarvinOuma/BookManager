@@ -64,8 +64,8 @@ def list_books():
     if not books:
         click.echo("No books found.")
         return
-    for book in books:
-        click.echo(f"{book.title} by {book.author.name} ({book.genre.name})")
+    for i, book in enumerate(books, 1):
+        click.echo(f"{i}. {book.title} by {book.author.name} ({book.genre.name})")
 
 def delete_book():
     book = select_book()
@@ -80,7 +80,7 @@ def delete_book():
         click.echo("Delete cancelled.")
 
 def main_menu():
-    click.echo("=== Book Manager CLI ===")
+    click.echo("\n\x1b[1m\x1b[4mBOOK MANAGER CLI\x1b[0m\n")  # Bold and underlined heading
     while True:
         click.echo("\nSelect an option:")
         click.echo("1. Add book")
